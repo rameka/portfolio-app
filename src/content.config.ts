@@ -7,7 +7,10 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(), // one-line summary shown on the writing list
-    pubDate: z.coerce.date(), // e.g. 2026-06-15
+    pubDate: z.coerce
+      .date()
+      .optional()
+      .default(() => new Date()),
     tags: z.array(z.string()).default([]), // e.g. ["AI", "Kafka"]
     thumb: z.string().default("pi1"), // gradient class: pi1 | pi2 | pi3 | pi4
     cover: z.string().optional(), // cover gradient on the post page

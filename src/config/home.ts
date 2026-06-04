@@ -59,8 +59,8 @@ export const home = {
 
   // --- Work cards. Add/remove/reorder. `img` is a gradient: pi1–pi4. ---
   work: {
-    label: "", // kicker hidden (was "Work") — "Selected projects" is the heading
-    heading: "Selected projects",
+    label: "", // kicker hidden (was "Work") — "Projects" is the heading
+    heading: "Projects",
     projects: [
       {
         img: "pi1",
@@ -184,25 +184,10 @@ export const home = {
     ],
   },
 
-  // --- Consult chat (static interface). Edit the scripted bubbles here. ---
+  // --- Consult / contact block ---
   consult: {
     label: "Consult",
-    heading: "Let's talk",
-    agentName: "Ram",
-    status: "● usually replies in a day",
-    inputPlaceholder: "Tell me about your project...",
-    // role: "them" = Ram (left bubble), "me" = visitor (right bubble)
-    messages: [
-      { role: "them", text: "Hey, I'm Ram. What are you working on?" },
-      {
-        role: "me",
-        text: "We're building an LLM feature and our Kafka pipeline keeps falling over under load.",
-      },
-      {
-        role: "them",
-        text: "That's squarely my thing. Want a quick architecture review, or hands on help?",
-      },
-    ],
-    quickReplies: ["Architecture review", "Hands on build", "Just exploring"],
+    heading: "Let's talk.",
+    lead: "Working on something in distributed systems or AI, or hiring for a senior role? I'd be glad to hear about it.",
   },
 };

@@ -22,17 +22,12 @@ const profIcons = [
       <div class="sub">{home.hero.sub}</div>
       <p class="lead">{home.hero.lead}</p>
       <div class="cta">
-        <a class="btn" href={home.hero.ctaHref} set:html={site.ui.hireMe} />
+        <a class="btn" href={home.hero.workHref} set:html={site.ui.seeWork} />
         <a
           class="reslink"
           href={site.resumePath}
           download
           set:html={site.ui.resume}
-        />
-        <a
-          class="worklink"
-          href={home.hero.workHref}
-          set:html={site.ui.seeWork}
         />
       </div>
     </div>
@@ -158,36 +153,58 @@ const profIcons = [
     </div>
   </div>
 
-  <!-- consult -->
+  <!-- consult / contact -->
   <div class="section" id="consult">
     <div class="wrap">
       <div class="slabel c">{home.consult.label}</div>
       <h2 class="center">{home.consult.heading}</h2>
-      <div class="chat">
-        <div class="hd">
-          <div class="av"></div>
-          <div>
-            <div class="nm">{home.consult.agentName}</div>
-            <div class="st">{home.consult.status}</div>
-          </div>
-        </div>
-        <div class="body">
-          {
-            home.consult.messages.map((m) => (
-              <div class={`bub ${m.role}`}>{m.text}</div>
-            ))
-          }
-          <div class="qr">
-            {home.consult.quickReplies.map((q) => <span class="qrb">{q}</span>)}
-          </div>
-        </div>
-        <div class="inp">
-          <input placeholder={home.consult.inputPlaceholder} />
-          <span class="send">{site.ui.send}</span>
-        </div>
+      <p class="clead">{home.consult.lead}</p>
+      <div class="cactions">
+        <a
+          class="btn"
+          href={`mailto:${site.email}`}
+          set:html={site.ui.emailMe}
+        />
+        <a
+          class="calllink"
+          href={site.scheduling}
+          set:html={site.ui.bookCall}
+        />
       </div>
+      <button
+        class="cmeta"
+        id="copyEmail"
+        type="button"
+        data-email={site.email}
+      >
+        <span id="copyEmailText">{site.email}</span>
+        &nbsp;·&nbsp; click to copy
+      </button>
     </div>
   </div>
+
+  <script>
+    const copyBtn = document.getElementById("copyEmail");
+    const copyText = document.getElementById("copyEmailText");
+    if (copyBtn && copyText) {
+      const email = copyBtn.dataset.email || "";
+      const original = copyText.textContent;
+      copyBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(email);
+        } catch {
+          const t = document.createElement("textarea");
+          t.value = email;
+          document.body.appendChild(t);
+          t.select();
+          document.execCommand("copy");
+          document.body.removeChild(t);
+        }
+        copyText.textContent = "Copied to clipboard";
+        setTimeout(() => (copyText.textContent = original), 1600);
+      });
+    }
+  </script>
 
   <!-- footer -->
   <div class="foot">

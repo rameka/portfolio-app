@@ -6,7 +6,7 @@
 export const site = {
   // --- Identity ---
   name: "Ramakrishna Sayee Meka",
-  email: "mramakrishnasayee@gmail.com",
+  email: "sayee.meka@gmail.com",
 
   // --- Feature flags. Flip to true to switch a feature on. ---
   features: {
@@ -26,7 +26,10 @@ export const site = {
   },
 
   // Resume file (lives in /public). Change the filename here if you rename it.
-  resumePath: "/Ramakrishna_Sayee_Meka_Resume_web.pdf",
+  resumePath: "/Ramakrishna_Sayee_Meka_Resume.pdf",
+
+  // Cal.com booking link for the contact block "book a call" action.
+  scheduling: "https://cal.com/sayee-meka/30min",
 
   // The little code comment pinned under the sidebar.
   sidebarJoke: "// light mode is a myth here",
@@ -48,7 +51,8 @@ export const site = {
       href: "https://linkedin.com/in/ramakrishnasayee",
       show: true,
     },
-    { platform: "instagram", href: "#", show: true },
+    // Instagram removed for now — set show:true and a real href to bring it back.
+    { platform: "instagram", href: "#", show: false },
   ],
 
   // --- Footer (appears on every page). ---
@@ -60,7 +64,8 @@ export const site = {
   // --- Reused button / link labels. Defined ONCE, used in many places. ---
   ui: {
     send: "Send",
-    hireMe: "Hire me \u2192",
+    emailMe: "Email me",
+    bookCall: "or book a call \u2192",
     resume: "\u2193 Resume",
     seeWork: "See my work \u2192",
     readArticle: "Read article \u2192",
