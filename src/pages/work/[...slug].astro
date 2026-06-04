@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+import { site } from "../../config/site";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const stackline = project.data.stack.join(" \u00b7 ");
+---
+
+<BaseLayout title={`${project.data.title} — Work`} active="work">
+  <div class="post">
+    <a class="backlink" href="/#work" set:html={site.ui.allWork} />
+    <div class="ptag">{project.data.badge}</div>
+    <h1>{project.data.title}</h1>
+    <div class="pmeta">
+      <span>{project.data.year}</span>
+      {stackline && <span>· {stackline}</span>}
+    </div>
+    <div class="cta" style="margin-top:18px">
+      {
+        project.data.demo && (
+          <a class="btn" href={project.data.demo} set:html={site.ui.liveDemo} />
+        )
+      }
+      {
+        project.data.github && (
+          <a class="worklink" href={project.data.github} set:html={site.ui.github} />
+        )
+      }
+    </div>
+    <div class={`cover ${project.data.cover}`}>[ project cover / screenshot ]</div>
+    <div class="prose">
+      <Content />
+    </div>
+    {
+      project.data.stack.length > 0 && (
+        <div class="stackrow">
+          {project.data.stack.map((s) => (
+            <span class="chip">{s}</span>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+import { site } from "../../config/site";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
+
+const tagline = post.data.tags.join(" \u00b7 ");
+---
+
+<BaseLayout title={`${post.data.title} — Writing`} active="writing">
+  <div class="post">
+    <a class="backlink" href="/writing" set:html={site.ui.allWriting} />
+    {tagline && <div class="ptag">{tagline}</div>}
+    <h1>{post.data.title}</h1>
+    <div class="pmeta">
+      <span>{fmt(post.data.pubDate)}</span>
+      {post.data.minRead && <span>· {post.data.minRead} min read</span>}
+    </div>
+    {
+      post.data.cover && (
+        <div class={`cover ${post.data.cover}`}>[ cover image ]</div>
+      )
+    }
+    <div class="prose">
+      <Content />
+    </div>
+    <div class="pfoot">
+      {tagline && <span>Tagged: {tagline}</span>}
+      <a class="backlink" href="/writing" set:html={site.ui.moreWriting} />
+    </div>
+  </div>
+</BaseLayout>

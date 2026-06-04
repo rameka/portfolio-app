@@ -6,26 +6,26 @@ import "@fontsource/ibm-plex-sans/500.css";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "../styles/global.css";
+import { site } from "../config/site";
 
 interface Props {
   title: string;
   description?: string;
-  active?: "home" | "about" | "work" | "writing" | "consult";
+  active?: string;
 }
 
-const {
-  title,
-  description = "Ramakrishna Sayee Meka — Senior Software Engineer building distributed systems and AI tooling.",
-  active = "home",
-} = Astro.props;
+const { title, description = site.seo.defaultDescription, active = "home" } =
+  Astro.props;
 
-const nav = [
-  { label: "home", href: "/", key: "home" },
-  { label: "about", href: "/#about", key: "about" },
-  { label: "work", href: "/#work", key: "work" },
-  { label: "writing", href: "/writing", key: "writing" },
-  { label: "consult", href: "/#consult", key: "consult" },
-];
+const socialPaths: Record<string, string> = {
+  github:
+    "M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z",
+  linkedin:
+    "M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.3a1.7 1.7 0 1 1 0-3.5 1.7 1.7 0 0 1 0 3.5zM19 19h-3v-4.7c0-1.1 0-2.6-1.6-2.6S12.6 13 12.6 14.2V19h-3v-9h2.9v1.2h.1a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7z",
+  instagram:
+    "M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2z",
+};
+const visibleSocials = site.socials.filter((s) => s.show);
 ---
 
 <!doctype html>
@@ -35,25 +35,28 @@ const nav = [
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
   </head>
   <body>
-    <!-- typed code intro -->
     <div class="introcode" id="cw">
       <div class="codeline" id="code"><span class="caret" id="caret"></span></div>
     </div>
 
-    <!-- cursor-following glow -->
     <div class="glow" id="glow"></div>
 
-    <!-- sidebar -->
     <div class="side">
       <div class="lockA">
-        <span class="tile">R</span><span class="rest">amakrishna</span>
+        <span class="tile">{site.wordmark.tile}</span><span class="rest"
+          >{site.wordmark.rest}</span
+        >
       </div>
       <div class="navwrap">
         <nav>
           {
-            nav.map((n) => (
+            site.nav.map((n) => (
               <a href={n.href} class={active === n.key ? "on" : ""}>
                 <span class="sl">/</span>
                 {n.label}
@@ -64,43 +67,25 @@ const nav = [
       </div>
       <div class="botblock">
         <div class="socs">
-          <a class="soc" href="https://github.com/rameka" aria-label="GitHub">
-            <svg viewBox="0 0 24 24" fill="currentColor"
-              ><path
-                d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"
-              ></path></svg
-            >
-          </a>
-          <a
-            class="soc"
-            href="https://linkedin.com/in/ramakrishnasayee"
-            aria-label="LinkedIn"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor"
-              ><path
-                d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.3a1.7 1.7 0 1 1 0-3.5 1.7 1.7 0 0 1 0 3.5zM19 19h-3v-4.7c0-1.1 0-2.6-1.6-2.6S12.6 13 12.6 14.2V19h-3v-9h2.9v1.2h.1a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7z"
-              ></path></svg
-            >
-          </a>
-          <a class="soc" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="currentColor"
-              ><path
-                d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2z"
-              ></path></svg
-            >
-          </a>
+          {
+            visibleSocials.map((s) => (
+              <a class="soc" href={s.href} aria-label={s.platform}>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d={socialPaths[s.platform]} />
+                </svg>
+              </a>
+            ))
+          }
         </div>
-        <div class="joke">// light mode is a myth here</div>
+        <div class="joke">{site.sidebarJoke}</div>
       </div>
     </div>
 
-    <!-- page content -->
     <div class="main">
       <slot />
     </div>
 
     <script>
-      // cursor-following glow
       const g = document.getElementById("glow");
       if (g) {
         addEventListener("mousemove", (e) => {
@@ -109,7 +94,6 @@ const nav = [
         });
       }
 
-      // typed code intro: once per session, skipped if reduced motion is preferred
       const cw = document.getElementById("cw");
       const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
       const seen = sessionStorage.getItem("introSeen");

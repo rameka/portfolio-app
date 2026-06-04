@@ -1,0 +1,203 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { site } from "../config/site";
+import { writing } from "../config/writing";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+// Tags are derived from the posts themselves — add a post with a new tag and
+// it shows up here automatically; remove the last post using a tag and it
+// disappears. Sorted by how often each tag is used, then alphabetically.
+const tagCounts = new Map<string, number>();
+for (const p of posts) {
+  for (const t of p.data.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+}
+const tags = [
+  "All",
+  ...[...tagCounts.keys()].sort(
+    (a, b) => tagCounts.get(b)! - tagCounts.get(a)! || a.localeCompare(b),
+  ),
+];
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
+
+const showSeries = site.features.series && writing.series.length > 0;
+---
+
+<BaseLayout title={`Writing — ${site.name}`} active="writing">
+  <div class="phead">
+    <div class="wrap">
+      <div class="eye">{writing.eyebrow}</div>
+      <div class="ph1">{writing.heading}</div>
+      <p class="plead">{writing.lead}</p>
+    </div>
+  </div>
+
+  {
+    showSeries && (
+      <div class="section" style="padding:42px 0 0">
+        <div class="wrap">
+          <div class="slabel" style="margin-bottom:16px">
+            Series
+          </div>
+          <div class="series-strip">
+            {writing.series.map((s) => (
+              <a class="scard" href={`/writing/${s.slug}`}>
+                <div class="nm">{s.title}</div>
+                <div class="bl">{s.blurb}</div>
+                <div class="mt">
+                  {s.parts} parts &nbsp;·&nbsp; start &#8594;
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <div
+    class="section"
+    style={showSeries ? "padding-top:44px" : "padding-top:38px"}
+  >
+    <div class="wrap">
+      {
+        showSeries && (
+          <div style="border-top:1px solid var(--line);margin-bottom:34px" />
+        )
+      }
+      {
+        showSeries && (
+          <div class="slabel" style="margin-bottom:20px">
+            Posts
+          </div>
+        )
+      }
+
+      <div class="wcontrols">
+        <div class="ftags" id="tags">
+          {
+            tags.map((t, i) => (
+              <button
+                class={i === 0 ? "ftag on" : "ftag"}
+                data-tag={t}
+                type="button"
+              >
+                {t}
+              </button>
+            ))
+          }
+        </div>
+        <button class="sortbtn" id="sort" type="button">
+          <span id="sortlabel">Recent</span> &#8645;
+        </button>
+      </div>
+
+      <div class="alist" id="rows">
+        {
+          posts.map((p) => (
+            <a
+              class="arow"
+              href={`/writing/${p.id}`}
+              data-tags={p.data.tags.join("|")}
+              data-date={p.data.pubDate.toISOString()}
+            >
+              <div class={`thumb ${p.data.thumb}`}>[ img ]</div>
+              <div class="ac">
+                <div class="meta">
+                  <span>{fmt(p.data.pubDate)}</span>
+                  {p.data.tags.length > 0 && (
+                    <span class="mtag">{p.data.tags.join(" \u00b7 ")}</span>
+                  )}
+                </div>
+                <h3>{p.data.title}</h3>
+                <div class="sum">{p.data.description}</div>
+                <div class="read" set:html={site.ui.readArticle} />
+              </div>
+              <div class="arr" set:html={site.ui.arrow} />
+            </a>
+          ))
+        }
+      </div>
+      <p class="wnone" id="noresults" style="display:none">
+        No posts with that tag yet.
+      </p>
+      {
+        posts.length === 0 && (
+          <p class="wnone">
+            No posts yet. Add a Markdown file in src/content/blog/ and it shows
+            up here.
+          </p>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="foot">
+    <div
+      class="wrap"
+      style="display:flex;justify-content:space-between;width:100%"
+    >
+      <span>{site.footer.left}</span>
+      <span>{site.footer.right}</span>
+    </div>
+  </div>
+
+  <script>
+    const rowsEl = document.getElementById("rows");
+    const tagsEl = document.getElementById("tags");
+    const sortEl = document.getElementById("sort");
+    const sortLabel = document.getElementById("sortlabel");
+    const noResults = document.getElementById("noresults");
+
+    if (rowsEl && tagsEl && sortEl) {
+      const rows = Array.from(rowsEl.querySelectorAll<HTMLElement>(".arow"));
+      let activeTag = "All";
+      let recent = true;
+
+      const apply = () => {
+        rows.sort((a, b) => {
+          const da = a.dataset.date || "";
+          const db = b.dataset.date || "";
+          return recent ? db.localeCompare(da) : da.localeCompare(db);
+        });
+        rows.forEach((r) => rowsEl.appendChild(r));
+
+        let visible = 0;
+        rows.forEach((r) => {
+          const tags = (r.dataset.tags || "").split("|");
+          const show = activeTag === "All" || tags.includes(activeTag);
+          r.style.display = show ? "" : "none";
+          if (show) visible++;
+        });
+        if (noResults) noResults.style.display = visible === 0 ? "" : "none";
+      };
+
+      tagsEl.addEventListener("click", (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLElement>(".ftag");
+        if (!btn) return;
+        activeTag = btn.dataset.tag || "All";
+        tagsEl
+          .querySelectorAll(".ftag")
+          .forEach((c) => c.classList.toggle("on", c === btn));
+        apply();
+      });
+
+      sortEl.addEventListener("click", () => {
+        recent = !recent;
+        if (sortLabel) sortLabel.textContent = recent ? "Recent" : "Oldest";
+        apply();
+      });
+
+      apply();
+    }
+  </script>
+</BaseLayout>

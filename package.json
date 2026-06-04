@@ -20,7 +20,9 @@
     "@fontsource/fraunces": "^5.2.9",
     "@fontsource/ibm-plex-mono": "^5.2.7",
     "@fontsource/ibm-plex-sans": "^5.2.8",
+    "@iconify-json/simple-icons": "^1.2.85",
     "astro": "^6.4.2",
+    "astro-icon": "^1.1.5",
     "sharp": "^0.34.3"
   },
   "devDependencies": {
