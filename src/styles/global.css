@@ -1097,6 +1097,13 @@ h1 {
   }
   .side nav a {
     font-size: 12.5px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+  }
+  .side nav a .sl {
+    display: inline;
   }
   .botblock {
     display: none;
