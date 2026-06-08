@@ -23,12 +23,7 @@ const profIcons = [
       <p class="lead">{home.hero.lead}</p>
       <div class="cta">
         <a class="btn" href={home.hero.workHref} set:html={site.ui.seeWork} />
-        <a
-          class="reslink"
-          href={site.resumePath}
-          download
-          set:html={site.ui.resume}
-        />
+        <a class="reslink" href={site.resumePath} download set:html={site.ui.resume} />
       </div>
     </div>
   </div>
@@ -41,9 +36,7 @@ const profIcons = [
       <div class="bio">
         {home.about.paragraphs.map((p) => <p>{p}</p>)}
       </div>
-      <pre
-        class="codecard"
-        style="max-width:680px;margin-top:26px"><span class="kw">const</span> ram = {"{"}
+      <pre class="codecard" style="max-width:680px;margin-top:26px"><span class="kw">const</span> ram = {"{"}
   role: <span class="st">"{r.role}"</span>,
   builds: <span class="st">"{r.builds}"</span>,
   focus: [{r.focus.map((f, i) => (<><span class="st">"{f}"</span>{i < r.focus.length - 1 ? ", " : ""}</>))}],
@@ -116,9 +109,7 @@ const profIcons = [
                   ))}
                 </div>
                 <div class="links">
-                  {p.demoHref && (
-                    <a href={p.demoHref} set:html={site.ui.liveDemo} />
-                  )}
+                  {p.demoHref && <a href={p.demoHref} set:html={site.ui.liveDemo} />}
                   {p.writeupHref && (
                     <a href={p.writeupHref} set:html={site.ui.writeup} />
                   )}
@@ -160,23 +151,10 @@ const profIcons = [
       <h2 class="center">{home.consult.heading}</h2>
       <p class="clead">{home.consult.lead}</p>
       <div class="cactions">
-        <a
-          class="btn"
-          href={`mailto:${site.email}`}
-          set:html={site.ui.emailMe}
-        />
-        <a
-          class="calllink"
-          href={site.scheduling}
-          set:html={site.ui.bookCall}
-        />
+        <a class="btn" href={`mailto:${site.email}`} set:html={site.ui.emailMe} />
+        <a class="calllink" href={site.scheduling} set:html={site.ui.bookCall} />
       </div>
-      <button
-        class="cmeta"
-        id="copyEmail"
-        type="button"
-        data-email={site.email}
-      >
+      <button class="cmeta" id="copyEmail" type="button" data-email={site.email}>
         <span id="copyEmailText">{site.email}</span>
         &nbsp;·&nbsp; click to copy
       </button>
@@ -208,10 +186,7 @@ const profIcons = [
 
   <!-- footer -->
   <div class="foot">
-    <div
-      class="wrap"
-      style="display:flex;justify-content:space-between;width:100%"
-    >
+    <div class="wrap" style="display:flex;justify-content:space-between;width:100%">
       <span>{site.footer.left}</span>
       <span>{site.footer.right}</span>
     </div>

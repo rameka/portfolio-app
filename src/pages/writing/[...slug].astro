@@ -34,9 +34,12 @@ const tagline = post.data.tags.join(" \u00b7 ");
       {post.data.minRead && <span>· {post.data.minRead} min read</span>}
     </div>
     {
-      post.data.cover && (
-        <div class={`cover ${post.data.cover}`}>[ cover image ]</div>
-      )
+      post.data.cover &&
+        (post.data.cover.startsWith("/") ? (
+          <img class="coverimg" src={post.data.cover} alt={post.data.title} />
+        ) : (
+          <div class={`cover ${post.data.cover}`}>[ cover image ]</div>
+        ))
     }
     <div class="prose">
       <Content />

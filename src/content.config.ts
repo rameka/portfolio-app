@@ -10,7 +10,7 @@ const blog = defineCollection({
     pubDate: z.coerce
       .date()
       .optional()
-      .default(() => new Date()),
+      .default(() => new Date()), // set a date (e.g. 2026-06-15) or omit it to use today
     tags: z.array(z.string()).default([]), // e.g. ["AI", "Kafka"]
     thumb: z.string().default("pi1"), // gradient class: pi1 | pi2 | pi3 | pi4
     cover: z.string().optional(), // cover gradient on the post page

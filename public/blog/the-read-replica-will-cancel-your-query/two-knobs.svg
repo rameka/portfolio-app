@@ -1,0 +1,41 @@
+<svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg" font-family="DejaVu Sans, sans-serif">
+  <rect width="1200" height="600" fill="#0c0c10"/>
+
+  <text x="60" y="64" font-size="30" font-weight="bold" fill="#f0f0f0">Every fix moves the pain. None removes it.</text>
+
+  <!-- card 1 -->
+  <rect x="60" y="110" width="340" height="360" rx="14" fill="#1a0e12" stroke="#ff5d73" stroke-width="2"/>
+  <text x="86" y="160" font-size="21" font-weight="bold" fill="#ff7d8f">Do nothing</text>
+  <text x="86" y="186" font-size="17" fill="#9aa0aa">default: 30s</text>
+  <line x1="86" y1="206" x2="374" y2="206" stroke="#33232a" stroke-width="1.5"/>
+  <text x="86" y="244" font-size="18" fill="#dcdce0">The replica waits 30</text>
+  <text x="86" y="270" font-size="18" fill="#dcdce0">seconds, then cancels</text>
+  <text x="86" y="296" font-size="18" fill="#dcdce0">the conflicting query.</text>
+  <rect x="86" y="400" width="288" height="44" rx="10" fill="#3a1018"/>
+  <text x="106" y="428" font-size="18" font-weight="bold" fill="#ff7d8f">cost: dropped queries</text>
+
+  <!-- card 2 -->
+  <rect x="430" y="110" width="340" height="360" rx="14" fill="#1a140a" stroke="#e0a23c" stroke-width="2"/>
+  <text x="456" y="160" font-size="21" font-weight="bold" fill="#f0b75a">Raise the delay</text>
+  <text x="456" y="186" font-size="17" fill="#9aa0aa">max_standby_streaming_delay</text>
+  <line x1="456" y1="206" x2="744" y2="206" stroke="#332a1a" stroke-width="1.5"/>
+  <text x="456" y="244" font-size="18" fill="#dcdce0">The replica holds off</text>
+  <text x="456" y="270" font-size="18" fill="#dcdce0">replaying WAL to let</text>
+  <text x="456" y="296" font-size="18" fill="#dcdce0">the query finish.</text>
+  <rect x="456" y="400" width="288" height="44" rx="10" fill="#33260f"/>
+  <text x="476" y="428" font-size="18" font-weight="bold" fill="#f0b75a">cost: stale reads / lag</text>
+
+  <!-- card 3 -->
+  <rect x="800" y="110" width="340" height="360" rx="14" fill="#1a140a" stroke="#e0a23c" stroke-width="2"/>
+  <text x="826" y="160" font-size="21" font-weight="bold" fill="#f0b75a">Feed back to primary</text>
+  <text x="826" y="186" font-size="17" fill="#9aa0aa">hot_standby_feedback</text>
+  <line x1="826" y1="206" x2="1114" y2="206" stroke="#332a1a" stroke-width="1.5"/>
+  <text x="826" y="244" font-size="18" fill="#dcdce0">The standby tells the</text>
+  <text x="826" y="270" font-size="18" fill="#dcdce0">primary not to vacuum</text>
+  <text x="826" y="296" font-size="18" fill="#dcdce0">rows it still needs.</text>
+  <rect x="826" y="400" width="288" height="44" rx="10" fill="#33260f"/>
+  <text x="846" y="428" font-size="18" font-weight="bold" fill="#f0b75a">cost: primary bloat</text>
+
+  <text x="60" y="528" font-size="20" fill="#8a8a92">Snapshot conflicts respond to all three. Lock conflicts from DDL on the primary do not; only the delay helps.</text>
+  <text x="60" y="560" font-size="20" fill="#cfcfcf">Pick the cost you can tolerate, ideally per query, not once for the whole cluster.</text>
+</svg>

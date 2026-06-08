@@ -18,7 +18,7 @@ for (const p of posts) {
 const tags = [
   "All",
   ...[...tagCounts.keys()].sort(
-    (a, b) => tagCounts.get(b)! - tagCounts.get(a)! || a.localeCompare(b),
+    (a, b) => (tagCounts.get(b)! - tagCounts.get(a)!) || a.localeCompare(b),
   ),
 ];
 
@@ -53,9 +53,7 @@ const showSeries = site.features.series && writing.series.length > 0;
               <a class="scard" href={`/writing/${s.slug}`}>
                 <div class="nm">{s.title}</div>
                 <div class="bl">{s.blurb}</div>
-                <div class="mt">
-                  {s.parts} parts &nbsp;·&nbsp; start &#8594;
-                </div>
+                <div class="mt">{s.parts} parts &nbsp;·&nbsp; start &#8594;</div>
               </a>
             ))}
           </div>
@@ -64,10 +62,7 @@ const showSeries = site.features.series && writing.series.length > 0;
     )
   }
 
-  <div
-    class="section"
-    style={showSeries ? "padding-top:44px" : "padding-top:38px"}
-  >
+  <div class="section" style={showSeries ? "padding-top:44px" : "padding-top:38px"}>
     <div class="wrap">
       {
         showSeries && (
@@ -110,7 +105,13 @@ const showSeries = site.features.series && writing.series.length > 0;
               data-tags={p.data.tags.join("|")}
               data-date={p.data.pubDate.toISOString()}
             >
-              <div class={`thumb ${p.data.thumb}`}>[ img ]</div>
+              {
+                p.data.thumb.startsWith("/") ? (
+                  <img class="thumb thumbimg" src={p.data.thumb} alt="" />
+                ) : (
+                  <div class={`thumb ${p.data.thumb}`}>[ img ]</div>
+                )
+              }
               <div class="ac">
                 <div class="meta">
                   <span>{fmt(p.data.pubDate)}</span>
@@ -142,10 +143,7 @@ const showSeries = site.features.series && writing.series.length > 0;
   </div>
 
   <div class="foot">
-    <div
-      class="wrap"
-      style="display:flex;justify-content:space-between;width:100%"
-    >
+    <div class="wrap" style="display:flex;justify-content:space-between;width:100%">
       <span>{site.footer.left}</span>
       <span>{site.footer.right}</span>
     </div>

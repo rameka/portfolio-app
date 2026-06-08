@@ -1,0 +1,45 @@
+<svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg" font-family="DejaVu Sans, sans-serif">
+  <rect width="1200" height="600" fill="#0c0c10"/>
+
+  <text x="60" y="60" font-size="30" font-weight="bold" fill="#f0f0f0">How the conflict happens</text>
+
+  <!-- lane labels -->
+  <text x="60" y="160" font-size="22" font-weight="bold" fill="#9aa0aa">PRIMARY</text>
+  <text x="60" y="410" font-size="22" font-weight="bold" fill="#9aa0aa">REPLICA</text>
+
+  <!-- lane tracks -->
+  <line x1="60" y1="195" x2="1140" y2="195" stroke="#2a2a33" stroke-width="2"/>
+  <line x1="60" y1="470" x2="1140" y2="470" stroke="#2a2a33" stroke-width="2"/>
+
+  <!-- primary: vacuum event -->
+  <circle cx="430" cy="195" r="9" fill="#f0f0f0"/>
+  <text x="300" y="120" font-size="20" fill="#e4e4e4">VACUUM removes</text>
+  <text x="300" y="146" font-size="20" fill="#e4e4e4">dead rows</text>
+
+  <!-- WAL ships down -->
+  <line x1="430" y1="206" x2="430" y2="446" stroke="#7a7a86" stroke-width="2" stroke-dasharray="6 6"/>
+  <polygon points="430,454 423,440 437,440" fill="#7a7a86"/>
+  <text x="446" y="300" font-size="19" fill="#9aa0aa">WAL: "those rows are gone"</text>
+
+  <!-- delay window bracket -->
+  <line x1="430" y1="355" x2="880" y2="355" stroke="#e0a23c" stroke-width="2"/>
+  <line x1="430" y1="348" x2="430" y2="362" stroke="#e0a23c" stroke-width="2"/>
+  <line x1="880" y1="348" x2="880" y2="362" stroke="#e0a23c" stroke-width="2"/>
+  <text x="486" y="345" font-size="19" fill="#e0a23c">max_standby_streaming_delay  (default 30s)</text>
+
+  <!-- replica long-running query bar (sits on the replica lane) -->
+  <rect x="190" y="450" width="690" height="40" rx="8" fill="#10303a" stroke="#5fc7e6" stroke-width="2"/>
+  <text x="210" y="476" font-size="19" fill="#cfeefa">SELECT ... running (holds a snapshot of the old rows)</text>
+
+  <!-- cancel -->
+  <circle cx="880" cy="470" r="22" fill="#3a1018" stroke="#ff5d73" stroke-width="2"/>
+  <line x1="871" y1="461" x2="889" y2="479" stroke="#ff5d73" stroke-width="3"/>
+  <line x1="889" y1="461" x2="871" y2="479" stroke="#ff5d73" stroke-width="3"/>
+  <text x="912" y="464" font-size="22" font-weight="bold" fill="#ff7d8f">query canceled</text>
+  <text x="912" y="490" font-size="19" fill="#d98a98">SQLSTATE 40001 (retryable)</text>
+
+  <!-- replay explanation -->
+  <text x="300" y="540" font-size="19" fill="#cfcfcf">replay wants to apply it, but the query still needs those rows</text>
+
+  <text x="60" y="586" font-size="20" fill="#8a8a92">The standby cannot show rows the primary already cleaned up. It waits for the delay window, then cancels.</text>
+</svg>

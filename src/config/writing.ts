@@ -22,14 +22,7 @@ export const writing = {
   // has entries. Add one like:
   //   { title: "System Design", slug: "system-design", parts: 28,
   //     blurb: "A ground-up walk through scalable system design." }
-  series: [
-    {
-      title: "System Design",
-      slug: "system-design",
-      parts: 28,
-      blurb: "A ground-up walk through scalable system design.",
-    },
-  ] as {
+  series: [] as {
     title: string;
     slug: string;
     parts: number;
