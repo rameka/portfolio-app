@@ -772,18 +772,34 @@ h1 {
 }
 .arow {
   display: flex;
-  gap: 22px;
+  gap: 18px;
   align-items: flex-start;
-  padding: 24px 10px;
+  padding: 15px 10px;
   border-bottom: 1px solid var(--line);
-  transition: background 0.2s;
+  transition:
+    background 0.2s,
+    opacity 0.26s ease,
+    transform 0.26s ease,
+    max-height 0.3s ease,
+    padding-top 0.3s ease,
+    padding-bottom 0.3s ease,
+    border-color 0.25s;
+}
+.arow.is-hidden {
+  opacity: 0;
+  transform: translateY(-6px);
+  overflow: hidden;
+  pointer-events: none;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom-color: transparent;
 }
 .arow:hover {
   background: rgba(34, 211, 238, 0.045);
 }
 .arow .thumb {
-  width: 156px;
-  height: 94px;
+  width: 116px;
+  height: 70px;
   border-radius: 10px;
   flex: 0 0 auto;
   display: flex;
@@ -818,9 +834,9 @@ h1 {
 .arow h3 {
   font-family: "Fraunces";
   font-weight: 600;
-  font-size: 23px;
+  font-size: 20px;
   line-height: 1.15;
-  margin-top: 9px;
+  margin-top: 6px;
   transition: color 0.2s;
 }
 .arow:hover h3 {
@@ -1268,16 +1284,15 @@ h1 {
    ============================================================ */
 .wcontrols {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 16px;
   margin: 6px 0 4px;
 }
 .ftags {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  flex: 1;
 }
 .sortbtn {
   font-family: "IBM Plex Mono";
@@ -1290,6 +1305,8 @@ h1 {
   cursor: pointer;
   background: none;
   transition: 0.15s;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 .sortbtn:hover {
   color: var(--accent);
@@ -1435,4 +1452,32 @@ h1 {
 .prose table code {
   font-size: 12.5px;
   white-space: nowrap;
+}
+
+/* Visible themed scrollbar */
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  border: 3px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 211, 238, 0.5);
+}
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .arow {
+    transition: background 0.2s;
+  }
 }
