@@ -11,6 +11,7 @@ export const site = {
   // --- Feature flags. Flip to true to switch a feature on. ---
   features: {
     series: false, // show the "Series" strip on /writing once you have one
+    work: false, // show the Projects section + work nav link once you have 2 projects
   },
 
   // Wordmark in the sidebar: a cyan "R" tile fused into the rest.

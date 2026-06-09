@@ -36,4 +36,20 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { blog, projects };
+// Lessons: src/content/lessons/*.md
+// These power the Series/course pages. They are intentionally a SEPARATE
+// collection from blog, so course lessons never show up on the main /writing
+// list. A lesson is just Markdown with a tiny bit of frontmatter. The order
+// and grouping of lessons live in src/config/writing.ts, not here.
+const lessons = defineCollection({
+  loader: glob({ base: "./src/content/lessons", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(), // optional one-liner
+    kind: z.enum(["concept", "code", "terms", "diagram"]).default("concept"),
+    minRead: z.number().optional(),
+    draft: z.boolean().default(false), // true = skipped in the course
+  }),
+});
+
+export const collections = { blog, projects, lessons };

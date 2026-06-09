@@ -1481,3 +1481,249 @@ html {
     transition: background 0.2s;
   }
 }
+/* ============================================================
+   SERIES / COURSE PAGES
+   Append this block to the END of src/styles/global.css.
+   It reuses your existing design tokens (--accent, --bg, etc.)
+   and your .prose styles for the lesson body.
+   ============================================================ */
+
+.ctop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.ctbtn {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11.5px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  background: none;
+  text-decoration: none;
+  transition: 0.14s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ctbtn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.ccontents {
+  display: none;
+}
+
+.coursepage {
+  display: flex;
+  gap: 26px;
+  align-items: flex-start;
+  position: relative;
+}
+
+.crail {
+  width: 236px;
+  flex: 0 0 auto;
+  position: sticky;
+  top: 88px;
+  align-self: flex-start;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+.crail::-webkit-scrollbar {
+  width: 9px;
+}
+.crail::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  border: 2px solid var(--bg);
+}
+
+.cstitle {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #2fd4ef;
+  padding: 2px 6px 14px;
+}
+
+.csys {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  padding: 8px 6px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 6px;
+  transition: background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.csys:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.cchev {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  color: var(--faint);
+  transition: transform 0.15s;
+}
+.csys.open .cchev {
+  transform: rotate(90deg);
+}
+
+.ckids {
+  margin: 0 0 6px 14px;
+  border-left: 1px solid var(--line);
+  padding-left: 8px;
+}
+.csecn {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #5f9bad;
+  padding: 16px 6px 6px;
+}
+.cles {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  padding: 6px 10px;
+  margin-left: -1px;
+  border-radius: 0 7px 7px 0;
+  color: #d3d9d3;
+  font-size: 14px;
+  line-height: 1.35;
+  transition: background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.cles:hover {
+  background: rgba(34, 211, 238, 0.1);
+  color: #fff;
+}
+.cles.on {
+  background: rgba(34, 211, 238, 0.13);
+  color: #fff;
+  border-left-color: var(--accent);
+}
+
+.cmain {
+  flex: 1;
+  min-width: 0;
+}
+.ccrumb {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  color: var(--faint);
+  margin-bottom: 12px;
+}
+.ctlabel {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5f9bad;
+  margin-bottom: 8px;
+}
+.cmt {
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.12;
+  margin: 0 0 18px;
+  color: var(--ink);
+}
+
+.cnav {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 30px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.cnavb {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11.5px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 13px;
+  cursor: pointer;
+  max-width: 46%;
+  text-align: left;
+  transition: 0.14s;
+  -webkit-tap-highlight-color: transparent;
+}
+.cnavb:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.cnavb.r {
+  text-align: right;
+}
+
+.cempty {
+  color: var(--faint);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+}
+
+.cbackdrop {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .ccontents {
+    display: inline-flex;
+  }
+  .coursepage {
+    display: block;
+  }
+  .crail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 84%;
+    max-width: 300px;
+    background: var(--card);
+    border-right: 1px solid var(--line);
+    transform: translateX(-101%);
+    transition: transform 0.25s ease;
+    z-index: 60;
+    max-height: none;
+    padding: 20px 14px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.6);
+  }
+  .coursepage.dopen .crail {
+    transform: none;
+  }
+  .cbackdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+    z-index: 55;
+  }
+  .coursepage.dopen .cbackdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

@@ -12,10 +12,15 @@ interface Props {
   title: string;
   description?: string;
   active?: string;
+  focused?: boolean; // true = hide the global side nav (used by course pages)
 }
 
-const { title, description = site.seo.defaultDescription, active = "home" } =
-  Astro.props;
+const {
+  title,
+  description = site.seo.defaultDescription,
+  active = "home",
+  focused = false,
+} = Astro.props;
 
 const socialPaths: Record<string, string> = {
   github:
@@ -26,6 +31,10 @@ const socialPaths: Record<string, string> = {
     "M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.1-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.1 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2z",
 };
 const visibleSocials = site.socials.filter((s) => s.show);
+
+// Hide the "work" nav link until the work feature is on. Every other nav
+// item is always shown. Flip site.features.work to true to bring it back.
+const navItems = site.nav.filter((n) => n.key !== "work" || site.features.work);
 ---
 
 <!doctype html>
@@ -39,47 +48,104 @@ const visibleSocials = site.socials.filter((s) => s.show);
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
+    <style is:global>
+      /* Focused mode: course/series pages hide the global side nav and let
+         content use the full width. A small wordmark tile links home. */
+      body.focused .side {
+        display: none;
+      }
+      body.focused .main {
+        margin-left: 0;
+      }
+      /* Wider container so the rail + content use the space instead of being
+         squeezed into a centered 920px column. */
+      body.focused .wrap {
+        max-width: 1280px;
+        padding: 0 56px;
+      }
+      /* Cap the lesson reading column so lines do not stretch too wide. */
+      body.focused .cmain {
+        max-width: 820px;
+      }
+      body.focused .focusmark {
+        position: fixed;
+        top: 22px;
+        left: 26px;
+        z-index: 30;
+        display: inline-flex;
+        text-decoration: none;
+      }
+      body.focused .focusmark .ftile {
+        display: inline-grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--accent);
+        color: #04181c;
+        font-family: "Fraunces", serif;
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 1;
+        box-shadow: 0 0 22px rgba(34, 211, 238, 0.35);
+        transition: transform 0.14s;
+      }
+      body.focused .focusmark:hover .ftile {
+        transform: translateY(-1px);
+      }
+      @media (max-width: 900px) {
+        body.focused .focusmark {
+          top: 14px;
+          left: 14px;
+        }
+      }
+    </style>
   </head>
-  <body>
+  <body class={focused ? "focused" : undefined}>
     <div class="introcode" id="cw">
-      <div class="codeline" id="code"><span class="caret" id="caret"></span></div>
+      <div class="codeline" id="code">
+        <span class="caret" id="caret"></span>
+      </div>
     </div>
 
     <div class="glow" id="glow"></div>
 
-    <div class="side">
-      <div class="lockA">
-        <span class="tile">{site.wordmark.tile}</span><span class="rest"
-          >{site.wordmark.rest}</span
-        >
-      </div>
-      <div class="navwrap">
-        <nav>
-          {
-            site.nav.map((n) => (
-              <a href={n.href} class={active === n.key ? "on" : ""}>
-                <span class="sl">/</span>
-                {n.label}
-              </a>
-            ))
-          }
-        </nav>
-      </div>
-      <div class="botblock">
-        <div class="socs">
-          {
-            visibleSocials.map((s) => (
-              <a class="soc" href={s.href} aria-label={s.platform}>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d={socialPaths[s.platform]} />
-                </svg>
-              </a>
-            ))
-          }
+    {
+      focused ? (
+        <a class="focusmark" href="/" aria-label="Home">
+          <span class="ftile">{site.wordmark.tile}</span>
+        </a>
+      ) : (
+        <div class="side">
+          <div class="lockA">
+            <span class="tile">{site.wordmark.tile}</span>
+            <span class="rest">{site.wordmark.rest}</span>
+          </div>
+          <div class="navwrap">
+            <nav>
+              {navItems.map((n) => (
+                <a href={n.href} class={active === n.key ? "on" : ""}>
+                  <span class="sl">/</span>
+                  {n.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+          <div class="botblock">
+            <div class="socs">
+              {visibleSocials.map((s) => (
+                <a class="soc" href={s.href} aria-label={s.platform}>
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d={socialPaths[s.platform]} />
+                  </svg>
+                </a>
+              ))}
+            </div>
+            <div class="joke">{site.sidebarJoke}</div>
+          </div>
         </div>
-        <div class="joke">{site.sidebarJoke}</div>
-      </div>
-    </div>
+      )
+    }
 
     <div class="main">
       <slot />
@@ -95,7 +161,9 @@ const visibleSocials = site.socials.filter((s) => s.show);
       }
 
       const cw = document.getElementById("cw");
-      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const reduceMotion = matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
       const seen = sessionStorage.getItem("introSeen");
 
       if (cw && (reduceMotion || seen)) {
