@@ -1,0 +1,211 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+import { site } from "../../../config/site";
+import { writing } from "../../../config/writing";
+import { flatten } from "../../../lib/series";
+
+export async function getStaticPaths() {
+  return writing.series.map((s) => ({
+    params: { series: s.slug },
+    props: { series: s },
+  }));
+}
+
+const { series } = Astro.props;
+
+// Lessons live in their own collection. Drafts are skipped.
+const lessonsCol = await getCollection("lessons", ({ data }) => !data.draft);
+const bySlug = new Map(lessonsCol.map((e) => [e.id, e]));
+
+// Single ordered list = source of truth for prev/next. Slugs with no
+// matching (or drafted) file are dropped so a typo never 404s the page.
+const flat = flatten(series).filter((f) => bySlug.has(f.slug));
+
+const KIND: Record<string, string> = {
+  concept: "Concept",
+  code: "Code",
+  terms: "Terms",
+  diagram: "Diagram",
+};
+
+const ordered = [];
+for (let i = 0; i < flat.length; i++) {
+  const f = flat[i];
+  const entry = bySlug.get(f.slug)!;
+  const { Content } = await render(entry);
+  ordered.push({
+    slug: f.slug,
+    title: entry.data.title,
+    kind: entry.data.kind as string,
+    sysName: f.sysName,
+    secTitle: f.secTitle,
+    Content,
+    prev: flat[i - 1]?.slug ?? null,
+    next: flat[i + 1]?.slug ?? null,
+  });
+}
+
+const titleOf = (slug: string) => bySlug.get(slug)?.data.title ?? slug;
+const firstId = ordered[0]?.slug ?? null;
+---
+
+<BaseLayout title={`${series.title} — ${site.name}`} active="writing" focused>
+  <div class="section" style="padding-top:30px">
+    <div class="wrap">
+      <div class="ctop">
+        <a class="ctbtn" href="/writing" set:html={site.ui.allWriting} />
+        <button class="ctbtn ccontents" type="button"
+          >&#9776;&nbsp; Contents</button
+        >
+      </div>
+
+      <div class="coursepage">
+        <div class="cbackdrop"></div>
+
+        <nav class="crail">
+          <div class="cstitle">{series.title}</div>
+          {
+            series.systems.map((sys, si) => (
+              <>
+                <div
+                  class={`csys${si === 0 ? " open" : ""}`}
+                  role="button"
+                  tabindex="0"
+                >
+                  <span class="cchev">&#9656;</span> {sys.name}
+                </div>
+                <div class="ckids" style={si === 0 ? "" : "display:none"}>
+                  {sys.sections.map((sec) => {
+                    const present = sec.lessons.filter((slug) =>
+                      bySlug.has(slug),
+                    );
+                    return (
+                      present.length > 0 && (
+                        <>
+                          <div class="csecn">{sec.title}</div>
+                          {present.map((slug) => (
+                            <div
+                              class={`cles${slug === firstId ? " on" : ""}`}
+                              data-id={slug}
+                              role="button"
+                              tabindex="0"
+                            >
+                              {titleOf(slug)}
+                            </div>
+                          ))}
+                        </>
+                      )
+                    );
+                  })}
+                </div>
+              </>
+            ))
+          }
+        </nav>
+
+        <div class="cmain">
+          {
+            ordered.length === 0 && (
+              <p class="cempty">
+                No lessons yet. Add files in src/content/lessons/ and list their
+                slugs in this series.
+              </p>
+            )
+          }
+          {
+            ordered.map((it, idx) => {
+              const Content = it.Content;
+              return (
+                <article
+                  class="lesson-panel"
+                  data-id={it.slug}
+                  style={idx === 0 ? "" : "display:none"}
+                >
+                  <div class="ccrumb">
+                    {series.title} / {it.sysName} / {it.secTitle}
+                  </div>
+                  <div class="ctlabel">{KIND[it.kind] ?? "Concept"}</div>
+                  <h1 class="cmt">{it.title}</h1>
+                  <div class="prose">
+                    <Content />
+                  </div>
+                  <div class="cnav">
+                    {it.prev ? (
+                      <button class="cnavb" data-id={it.prev} type="button">
+                        &#8592; {titleOf(it.prev)}
+                      </button>
+                    ) : (
+                      <span />
+                    )}
+                    {it.next ? (
+                      <button class="cnavb r" data-id={it.next} type="button">
+                        {titleOf(it.next)} &#8594;
+                      </button>
+                    ) : (
+                      <span />
+                    )}
+                  </div>
+                </article>
+              );
+            })
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const page = document.querySelector<HTMLElement>(".coursepage");
+    if (page) {
+      const rail = page.querySelector<HTMLElement>(".crail")!;
+      const main = page.querySelector<HTMLElement>(".cmain")!;
+      const panels = Array.from(
+        page.querySelectorAll<HTMLElement>(".lesson-panel"),
+      );
+      const lessons = Array.from(rail.querySelectorAll<HTMLElement>(".cles"));
+
+      const show = (id: string) => {
+        panels.forEach(
+          (p) => (p.style.display = p.dataset.id === id ? "" : "none"),
+        );
+        lessons.forEach((l) => l.classList.toggle("on", l.dataset.id === id));
+        const active = rail.querySelector<HTMLElement>(".cles.on");
+        if (active) {
+          const kids = active.closest<HTMLElement>(".ckids");
+          if (kids) {
+            kids.style.display = "block";
+            const sys = kids.previousElementSibling as HTMLElement | null;
+            if (sys && sys.classList.contains("csys"))
+              sys.classList.add("open");
+          }
+        }
+        page.classList.remove("dopen");
+        window.scrollTo({ top: 0 });
+      };
+
+      rail.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        const sys = target.closest<HTMLElement>(".csys");
+        if (sys) {
+          const kids = sys.nextElementSibling as HTMLElement | null;
+          const openNow = sys.classList.toggle("open");
+          if (kids) kids.style.display = openNow ? "block" : "none";
+          return;
+        }
+        const les = target.closest<HTMLElement>(".cles");
+        if (les && les.dataset.id) show(les.dataset.id);
+      });
+
+      main.addEventListener("click", (e) => {
+        const b = (e.target as HTMLElement).closest<HTMLElement>(".cnavb");
+        if (b && b.dataset.id) show(b.dataset.id);
+      });
+
+      const cbtn = page.parentElement?.querySelector<HTMLElement>(".ccontents");
+      const bd = page.querySelector<HTMLElement>(".cbackdrop");
+      cbtn?.addEventListener("click", () => page.classList.toggle("dopen"));
+      bd?.addEventListener("click", () => page.classList.remove("dopen"));
+    }
+  </script>
+</BaseLayout>
